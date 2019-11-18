@@ -1,0 +1,33 @@
+version: '3'
+
+volumes:
+  vault:
+
+services:
+  vault:
+    image: vault:1.2.4
+    command: server # -config=/vault/config/vault.hcl
+    ports:
+      - 8200:8200
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - vault:/vault
+      - ./config:/vault/config
+
+  app:
+    build: .
+    image: vault-sidecar:compose
+    environment:
+      VAULT_ADDR: 'http://vault:8200'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    links:
+      - vault
+    depends_on:
+      - vault
