@@ -24,9 +24,11 @@ services:
     image: vault-sidecar:compose
     environment:
       VAULT_ADDR: 'http://vault:8200'
+      MASTER_PASSWORD: ut2XJBF2xclrEoiWA843QRSON8pxHjlm
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./output:/output
     links:
       - vault
     depends_on:

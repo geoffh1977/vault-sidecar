@@ -11,6 +11,8 @@ import hvac
 class Vault:
   shares = 5
   threshold = 3
+  rootToken = ''
+  keys = []
 
   def __init__(self, addr=None, keys=None):
     if addr:
@@ -80,9 +82,16 @@ class Vault:
       logging.info('Vault Is Already Unsealed.')
     return True
 
-  def setup(self):
-    if not self.initialize():
-      return False
-    if not self.unseal(self.keys):
+  def is_initialized(self):
+      return self.client.sys.is_initialized()
+
+  def is_sealed(self):
+    return self.client.sys.is_sealed()
+
+  def is_ready(self):
+    if self.is_initialized():
+      if self.is_sealed():
+        return False
+    else:
       return False
     return True
